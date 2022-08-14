@@ -4,13 +4,23 @@ Use SSH to connect to your kubernetes cluster. See [blog post](http://ruediste.g
 ## Usage
 
 1. Add your public key to authorized_keys
-1. If you want a fixed public IP, set the desired loadBalancerIP in k8s/ssh-service.yaml
-1. Run generateHostKeys.sh
-1. Run updateKeys.sh
-1. kubectl create -f k8s/ssh.yaml
-1. kubectl create -f k8s/ssh-service.yaml
+2. Generate host keys: `./generateHostKeys.sh`
+3. Create Kubernetes secret for ssh: `kubectl create secret generic ssh-dir --from-file=./authorized_keys`
+4. Create Kubernetes secret for host keys: `kubectl create secret generic ssh-host-keys --from-file=hostKeys`
+5. Update values in `./helm-charts/sshd/values.yaml` to fit your use case
+6. If you want a fixed public IP, set value `.service.externalIP` or `.service.clusterIP`
+7. Install the helm chart: `helm upgrade --install sshd ./helm-charts/sshd`
 
-Whenever you want to add/remove keys
+Whenever you made change to the template:
+
+`helm upgrade --install sshd ./helm-charts/sshd`
+
+Whenever you want to add/remove authorized keys
 
 1. Edit authorized_keys
-1. Run updateKeys.sh
+2. Delete ssh dir secret with `kubectl delete secret ssh-dir`
+3. Re-run `kubectl create secret generic ssh-dir --from-file=./authorized_keys`
+
+To uninstall:
+
+`helm uninstall sshd`

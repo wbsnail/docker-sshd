@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sshd.fullname" . }}
+  labels:
+    {{- include "sshd.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      {{- if contains "NodePort" .Values.service.type }}
+      {{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+      {{- end }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  {{- if contains "LoadBalancer" .Values.service.type }}
+  {{- if .Values.service.externalIP }}
+  externalIPs:
+    - {{ .Values.service.externalIP }}
+  {{- end }}
+  {{- else if contains "ClusterIP" .Values.service.type }}
+  {{- if .Values.service.clusterIP }}
+  clusterIP:
+    - {{ .Values.service.clusterIP }}
+  {{- end }}
+  {{- end }}
+  selector:
+    {{- include "sshd.selectorLabels" . | nindent 4 }}

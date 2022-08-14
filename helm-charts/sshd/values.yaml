@@ -1,0 +1,52 @@
+# Default values for sshd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ruediste/sshd
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+sshSecretName: 'ssh-dir'
+sshHostKeysSecretName: 'ssh-host-keys'
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  # ClusterIP: can only log in inside the cluster
+  # NodePort: can log in with any node's IP (not port 22 but the assigned port)
+  # LoadBalance: can log in with external load balancer IP
+  type: ClusterIP
+  port: 22
+  # clusterIP: ''
+  # nodePort: 32022
+  # externalIP: ''
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
